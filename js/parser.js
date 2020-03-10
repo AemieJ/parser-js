@@ -1,6 +1,6 @@
 let initialParser = (options) => {
     let token = [],
-        type = [],
+        types = [],
         // Writing a lexer
         parse = () => {
             let data = options.input
@@ -10,7 +10,15 @@ let initialParser = (options) => {
             len = data.length,
             start = 0,
             commentBlock = () => {
-
+                let comment = [],
+                    anotherStart = 0;
+                for(anotherStart = 0; anotherStart < len; ++anotherStart) {
+                    comment.push(data[anotherStart]);
+                    if (data[anotherStart] === "/" && data[anotherStart-1] === "*") break;
+                }
+                start = anotherStart;
+                token.push(comment.join(""));
+                types.push("comment-block");
             };
             for (start = 0; start < len; ++start) {
                 if (data[start] === "/" && data[start+1] === "*") {
@@ -18,5 +26,7 @@ let initialParser = (options) => {
                 }
             }
         };
+    parse();
+    return {token: token, types: types};
 };
 
